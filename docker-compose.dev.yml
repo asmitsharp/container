@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/workspace
+      - /var/run/docker.sock:/var/run/docker.sock
+    privileged: true
+    stdin_open: true
+    tty: true
+    working_dir: /workspace
+    environment:
+      - GO111MODULE=on
+      - CGO_ENABLED=1
+      - GOOS=linux
+    command: /bin/bash
