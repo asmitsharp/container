@@ -13,7 +13,18 @@ import (
 )
 
 // TestNamespaceIsolation tests various namespace isolation features
+
+const rootfsPath = "../busybox-rootfs"
+
+// checkRootfs is a helper to ensure the rootfs for testing exists.
+func checkRootfs(t *testing.T) {
+	if _, err := os.Stat(rootfsPath); os.IsNotExist(err) {
+		t.Fatalf("Test rootfs not found at %s. Please run the setup steps from the documentation.", rootfsPath)
+	}
+}
 func TestNamespaceIsolation(t *testing.T) {
+	checkRootfs(t)
+
 	tests := []struct {
 		name      string
 		flags     namespaces.NamespaceFlags
@@ -52,7 +63,7 @@ func TestNamespaceIsolation(t *testing.T) {
 			executor := namespaces.NewProcessExecutor(tt.flags)
 
 			// Start container process
-			process, err := executor.CreateContainer([]string{"/bin/sleep", "10"})
+			process, err := executor.CreateContainer([]string{"/bin/sleep", "10"}, rootfsPath)
 			if err != nil {
 				t.Fatalf("Failed to create container: %v", err)
 			}
@@ -157,7 +168,7 @@ func BenchmarkNamespaceCreation(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		process, err := executor.CreateContainer([]string{"/bin/true"})
+		process, err := executor.CreateContainer([]string{"/bin/true"}, rootfsPath)
 		if err != nil {
 			b.Fatalf("Failed to create container: %v", err)
 		}
