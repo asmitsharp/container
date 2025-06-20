@@ -37,10 +37,13 @@ func main() {
 }
 
 func handleRun(args []string) {
-	config := &container.ContainerConfig{
-		Image:   args[0],
-		Command: []string{"/bin/sh"},
-	}
+	config := container.DefaultContainerConfig()
+	config.Image = args[0]
+
+	// config := &container.ContainerConfig{
+	// 	Image:   args[0],
+	// 	Command: []string{"/bin/sh"},
+	// }
 
 	if len(args) > 1 {
 		config.Command = args[1:]

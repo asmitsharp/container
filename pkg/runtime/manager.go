@@ -35,7 +35,7 @@ func (rm *RuntimeManager) CreateContainer(config *container.ContainerConfig) (st
 
 	executor := namespaces.NewProcessExecutor(config.Namespaces)
 
-	process, err := executor.CreateContainer(config.Command)
+	process, err := executor.CreateContainer(config.Command, config.Rootfs)
 	if err != nil {
 		return "", fmt.Errorf("failed to create container process: %w", err)
 	}

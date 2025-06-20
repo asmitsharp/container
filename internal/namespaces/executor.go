@@ -31,7 +31,7 @@ func (pe *ProcessExecutor) SetIO(stdin io.Reader, stdout, stderr io.Writer) {
 	pe.stderr = stderr
 }
 
-func (pe *ProcessExecutor) CreateContainer(command []string) (*ContainerProcess, error) {
+func (pe *ProcessExecutor) CreateContainer(command []string, rootfs string) (*ContainerProcess, error) {
 	if len(command) == 0 {
 		return nil, fmt.Errorf("no command specified")
 	}
@@ -43,7 +43,8 @@ func (pe *ProcessExecutor) CreateContainer(command []string) (*ContainerProcess,
 	defer parentRead.Close()
 
 	//command to execute the child process
-	cmd := exec.Command("/proc/self/exe", append([]string{"child"}, command...)...)
+	args := append([]string{"child", rootfs}, command...)
+	cmd := exec.Command("/proc/self/exe", args...)
 
 	// Set namespace flags for clone
 	cmd.SysProcAttr = &syscall.SysProcAttr{
@@ -71,6 +72,12 @@ func (pe *ProcessExecutor) CreateContainer(command []string) (*ContainerProcess,
 		cmd.Wait()
 		return nil, fmt.Errorf("child process setup failed: %w", err)
 	}
+
+	// In a new PID namespace, the child process will be PID 1
+	// containerPID := 1
+	// if !pe.config.PID {
+	// 	containerPID = cmd.Process.Pid
+	// }
 
 	container := &ContainerProcess{
 		PID:       cmd.Process.Pid,

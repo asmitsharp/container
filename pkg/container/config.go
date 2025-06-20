@@ -9,6 +9,7 @@ type ContainerConfig struct {
 	Hostname   string
 	WorkingDir string
 	Env        []string
+	Rootfs     string
 }
 
 func DefaultContainerConfig() *ContainerConfig {
@@ -19,5 +20,6 @@ func DefaultContainerConfig() *ContainerConfig {
 		Hostname:   "container-host",
 		WorkingDir: "/",
 		Env:        []string{},
+		Rootfs:     "./busybox-rootfs",
 	}
 }
