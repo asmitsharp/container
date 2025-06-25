@@ -122,6 +122,9 @@
 
 // 	return syscall.Exec(binary, args, os.Environ())
 // }
+//
+
+//go:build linux
 
 package container
 

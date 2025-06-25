@@ -1,3 +1,5 @@
+//go:build linux
+
 package container
 
 import "github.com/ashmitsharp/container/internal/namespaces"
